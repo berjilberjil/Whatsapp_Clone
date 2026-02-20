@@ -3,6 +3,7 @@ import 'package:whatsin/screens/call.dart';
 import 'package:whatsin/screens/community.dart';
 import 'package:whatsin/screens/home.dart';
 import 'package:whatsin/screens/updates.dart';
+import 'package:whatsin/styles/color.dart';
 
 class BottomNavBarWidget extends StatefulWidget {
   const BottomNavBarWidget({super.key});
@@ -12,64 +13,49 @@ class BottomNavBarWidget extends StatefulWidget {
 }
 
 class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
-  int activeIndex = 0;
+  int _activeIndex = 0;
 
-  PageController pageController = PageController();
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    UpdatesScreen(),
+    CommunityScreen(),
+    CallScreen(),
+  ];
+
+  IconData get _fabIcon {
+    switch (_activeIndex) {
+      case 1:
+        return Icons.camera_alt;
+      case 2:
+        return Icons.group_add;
+      case 3:
+        return Icons.add_call;
+      default:
+        return Icons.chat;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: PageView(
-        controller: pageController,
-        onPageChanged: (index) {
-          setState(() {
-            activeIndex = index;
-          });
-        },
-        children: const [
-          HomeScreen(),
-          UpdatesScreen(),
-          CommunityScreen(),
-          CallScreen(),
-        ],
+      body: IndexedStack(index: _activeIndex, children: _screens),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: AppColors.whatsappGreen,
+        foregroundColor: Colors.black,
+        child: Icon(_fabIcon),
       ),
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color(0xFF07141C),
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              label: "Chats",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.circle_sharp),
-              label: "Updates",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.group),
-              label: "Communities",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.call),
-              label: "Calls",
-            ),
-          ],
-          currentIndex: activeIndex,
-
-          selectedItemColor: const Color.fromARGB(
-              255, 33, 243, 103), // Color for the selected item
-          unselectedItemColor: Colors.grey, // Color for the unselected items
-          onTap: (index) {
-            setState(() {
-              activeIndex = index;
-            });
-            pageController.jumpToPage(index);
-          },
-          showUnselectedLabels: true,
-        ),
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: AppColors.navBar,
+        selectedIndex: _activeIndex,
+        indicatorColor: AppColors.card,
+        onDestinationSelected: (index) => setState(() => _activeIndex = index),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.chat_outlined), label: 'Chats'),
+          NavigationDestination(icon: Icon(Icons.update_outlined), label: 'Updates'),
+          NavigationDestination(icon: Icon(Icons.groups_outlined), label: 'Communities'),
+          NavigationDestination(icon: Icon(Icons.call_outlined), label: 'Calls'),
+        ],
       ),
     );
   }

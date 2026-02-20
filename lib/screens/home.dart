@@ -1,188 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:whatsin/screens/archived.dart';
-import 'package:whatsin/screens/sample.dart';
+import 'package:whatsin/screens/mychatscreen.dart';
+import 'package:whatsin/styles/color.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final List<Map<String, dynamic>> _chats = [
+    {'name': 'Aarav', 'message': 'Let\'s meet at 7?', 'time': '09:42', 'unread': 2},
+    {'name': 'Design Team', 'message': 'Shivam: Shared new mocks', 'time': '08:10', 'unread': 8},
+    {'name': 'Mom', 'message': 'Call me when free', 'time': 'Yesterday', 'unread': 0},
+    {'name': 'Flutter Devs', 'message': 'New package released!', 'time': 'Yesterday', 'unread': 4},
+    {'name': 'Travel Buddies', 'message': 'Tickets booked ✅', 'time': 'Mon', 'unread': 0},
+  ];
+
+  String _query = '';
+
+  @override
   Widget build(BuildContext context) {
+    final filtered = _chats
+        .where((c) => c['name'].toString().toLowerCase().contains(_query.toLowerCase()))
+        .toList();
+
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 0, 255, 8),
-        onPressed: () {},
-        child: const Icon(
-          Icons.add_comment,
-          color: Colors.black,
-        ),
+      appBar: AppBar(
+        backgroundColor: AppColors.appBar,
+        title: const Text('WhatsApp'),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+        ],
       ),
-      backgroundColor: const Color(0xFF07141C),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(110),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: AppBar(
-            title: const Text(
-              "WhatsIn",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  color: Color.fromARGB(255, 255, 255, 255)),
-            ),
-            backgroundColor: const Color(0xFF07141C),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.qr_code, color: Colors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.camera_alt, color: Colors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.more_vert, color: Colors.white),
-                onPressed: () {},
-              ),
-            ],
-            bottom: const PreferredSize(
-              preferredSize: Size.fromHeight(0),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: SearchBar(
-                  hintText: "Ask Meta AL or Search",
-                  leading: Icon(
-                    Icons.circle_outlined,
-                    color: Colors.blue,
-                  ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              onChanged: (value) => setState(() => _query = value),
+              decoration: InputDecoration(
+                hintText: 'Ask Meta AI or Search',
+                filled: true,
+                fillColor: AppColors.card,
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: GestureDetector(
-                  child: InkWell(
-                    onTap: () => const ArchivedChat(),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.archive,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 15),
-                        Text(
-                          "Archived",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          "10",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w300,
-                            color: Color.fromARGB(255, 81, 208, 3),
-                          ),
-                        ),
-                      ],
-                    ),
+          ListTile(
+            onTap: () => Get.to(const ArchivedChat()),
+            leading: const Icon(Icons.archive_outlined),
+            title: const Text('Archived'),
+            trailing: const Text('2', style: TextStyle(color: AppColors.whatsappGreen)),
+          ),
+          const Divider(color: AppColors.divider, height: 1),
+          Expanded(
+            child: ListView.separated(
+              itemCount: filtered.length,
+              separatorBuilder: (_, __) => const Divider(color: AppColors.divider, indent: 72),
+              itemBuilder: (context, index) {
+                final chat = filtered[index];
+                final unread = chat['unread'] as int;
+                return ListTile(
+                  onTap: () => Get.to(ChatDetailScreen(name: chat['name'].toString())),
+                  leading: CircleAvatar(
+                    backgroundColor: AppColors.whatsappDarkGreen,
+                    child: Text(chat['name'].toString()[0]),
                   ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Get.to( const PhoneNumberScreen());
-                },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  title: Text(chat['name'].toString()),
+                  subtitle: Text(chat['message'].toString(), style: const TextStyle(color: AppColors.textSecondary)),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      CircleAvatar(
-                        radius: 25,
-                      ),
-                      SizedBox(width: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Berjil (You)",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400),
+                      Text(chat['time'].toString(), style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                      if (unread > 0)
+                        Container(
+                          margin: const EdgeInsets.only(top: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: const BoxDecoration(
+                            color: AppColors.whatsappGreen,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
-                          SizedBox(height: 5),
-                          Text(
-                            "Message",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300),
-                          ),
-                        ],
-                      ),
+                          child: Text('$unread', style: const TextStyle(color: Colors.black, fontSize: 12)),
+                        ),
                     ],
                   ),
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap:
-                    true, // Makes ListView inside Column scroll correctly
-                physics:
-                    const NeverScrollableScrollPhysics(), // Disables ListView scroll to avoid conflict
-                itemCount: 100,
-                itemBuilder: (BuildContext context, int index) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 25,
-                        ),
-                        SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Cathrine",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Message",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
