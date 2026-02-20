@@ -1,163 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:whatsin/styles/color.dart';
 
 class CallScreen extends StatelessWidget {
   const CallScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final recents = [
+      {'name': 'Aarav', 'time': 'Today, 10:23', 'video': false},
+      {'name': 'Mom', 'time': 'Today, 08:15', 'video': true},
+      {'name': 'Design Team', 'time': 'Yesterday, 20:45', 'video': true},
+      {'name': 'Aditi', 'time': 'Yesterday, 14:10', 'video': false},
+    ];
+
     return Scaffold(
-      backgroundColor: const Color(0xFF07141C),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(65),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 0),
-          child: AppBar(
-            title: const Text(
-              "Calls",
-              style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                  color: Color.fromARGB(255, 255, 255, 255)),
-            ),
-            backgroundColor: const Color(0xFF07141C),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.qr_code, color: Colors.white),
-                onPressed: () async {
-                  // Your async code here
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.camera_alt, color: Colors.white),
-                onPressed: () async {
-                  // Your async code here
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.more_vert, color: Colors.white),
-                onPressed: () async {
-                  // Your async code here
-                },
-              ),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        backgroundColor: AppColors.appBar,
+        title: const Text('Calls'),
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 20, right: 20),
-              child: Row(
-                children: [
-                  Text(
-                    "Favourites",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Spacer(),
-                  Text(
-                    "More",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromARGB(255, 0, 255, 110),
-                    ),
-                  ),
-                ],
-              ),
+      body: ListView(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Favorites', style: TextStyle(color: AppColors.textSecondary)),
+          ),
+          const ListTile(
+            leading: CircleAvatar(backgroundColor: AppColors.whatsappDarkGreen, child: Icon(Icons.favorite)),
+            title: Text('Add favorite'),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('Recent', style: TextStyle(color: AppColors.textSecondary)),
+          ),
+          ...recents.map(
+            (call) => ListTile(
+              leading: CircleAvatar(backgroundColor: AppColors.card, child: Text(call['name'].toString()[0])),
+              title: Text(call['name'].toString()),
+              subtitle: Text(call['time'].toString(), style: const TextStyle(color: AppColors.textSecondary)),
+              trailing: Icon(call['video'] == true ? Icons.videocam : Icons.call, color: AppColors.whatsappGreen),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: 3,
-              itemBuilder: (BuildContext context, int index) {
-                return const Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                  child: Row(
-                    children: [
-                      CircleAvatar(),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Cathrine",
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                      Spacer(),
-                      Icon(
-                        Icons.call,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      Icon(
-                        Icons.video_camera_back_outlined,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-              child: Row(
-                children: [
-                  Text(
-                    "Recent",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(
-                
-              ),
-              itemCount: 20,
-              itemBuilder: (BuildContext context, int index) {
-                return const Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                  child: Row(
-                    children: [
-                      CircleAvatar(),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Cathrine",
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                      Spacer(),
-                      Icon(
-                        Icons.call,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: 30,
-                      ),
-                      Icon(
-                        Icons.video_camera_back_outlined,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,418 +1,114 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:whatsin/screens/sample.dart';
+import 'package:whatsin/styles/color.dart';
 
-class Mychatscreen extends StatelessWidget {
-  const Mychatscreen({super.key});
+class ChatDetailScreen extends StatefulWidget {
+  const ChatDetailScreen({super.key, required this.name});
+
+  final String name;
+
+  @override
+  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+}
+
+class _ChatDetailScreenState extends State<ChatDetailScreen> {
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, dynamic>> _messages = [
+    {'text': 'Hey! Are we still meeting today?', 'isMe': false},
+    {'text': 'Yes, 7 PM works for me.', 'isMe': true},
+    {'text': 'Perfect 👍', 'isMe': false},
+  ];
+
+  void _sendMessage() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _messages.add({'text': text, 'isMe': true});
+      _controller.clear();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF07141C),
       appBar: AppBar(
-        leading: const Icon(
-          Icons.arrow_back,
-          color: Colors.white,
+        backgroundColor: AppColors.appBar,
+        title: Row(
+          children: [
+            CircleAvatar(backgroundColor: AppColors.whatsappDarkGreen, child: Text(widget.name[0])),
+            const SizedBox(width: 10),
+            Text(widget.name),
+          ],
         ),
         actions: [
-          PopupMenuButton<String>(
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  value: "New group",
-                  child: InkWell(
-                    onTap: () {
-                      Get.to(const PhoneNumberScreen());
-                    },
-                    child: const Text(
-                      "New group",
-                      style: TextStyle(color: Colors.white),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.videocam_outlined)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.call_outlined)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              reverse: true,
+              padding: const EdgeInsets.all(12),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[_messages.length - 1 - index];
+                final isMe = message['isMe'] as bool;
+                return Align(
+                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: isMe ? AppColors.whatsappDarkGreen : AppColors.card,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(message['text'].toString()),
+                  ),
+                );
+              },
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        hintText: 'Message',
+                        filled: true,
+                        fillColor: AppColors.card,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const PopupMenuItem(
-                  value: "New broadcast",
-                  child: Text(
-                    "New broadcast",
-                    style: TextStyle(color: Colors.white),
+                  const SizedBox(width: 8),
+                  FloatingActionButton.small(
+                    heroTag: 'send',
+                    backgroundColor: AppColors.whatsappGreen,
+                    foregroundColor: Colors.black,
+                    onPressed: _sendMessage,
+                    child: const Icon(Icons.send),
                   ),
-                ),
-                const PopupMenuItem(
-                  value: "WhatsApp Web",
-                  child: Text(
-                    "WhatsApp Web",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: "Starred messages",
-                  child: Text(
-                    "Starred messages",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: "Settings",
-                  child: Text(
-                    "Settings",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ];
-            },
-            color: const Color.fromARGB(255, 8, 23, 33),
-            iconColor: Colors.white,
-          ),
-        ],
-        backgroundColor: const Color(0xFF07141C),
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(),
-            SizedBox(
-              width: 10,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Berjil (You)",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                Text(
-                  "Message yourself",
-                  style: TextStyle(fontSize: 10, color: Colors.white),
-                ),
-              ],
-            ),
-            Spacer(),
-          ],
-        ),
-      ),
-      body: const SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-            Text(
-              "data",
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(22.0),
-        child: BottomAppBar(
-          height: 40,
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.all(
-                Radius.circular(40),
+                ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
